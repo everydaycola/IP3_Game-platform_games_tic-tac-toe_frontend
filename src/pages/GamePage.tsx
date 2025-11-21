@@ -1,4 +1,4 @@
-import { Typography, Box, Stack } from "@mui/material";
+import { Typography, Box, Stack} from "@mui/material";
 import {GameBoard} from "../components/GameBoard.tsx";
 import {CurrentPlayerComponent} from "../components/CurrentPlayerComponent.tsx";
 
@@ -6,7 +6,7 @@ import {CurrentPlayerComponent} from "../components/CurrentPlayerComponent.tsx";
 export function GamePage() {
     return (
         <Box
-            sx={{p:2}}
+            sx={{p:2, position:"relative"}}
         >
             <Typography variant={"h4"}>Tic Tac Toe</Typography>
             <CurrentPlayerComponent currentUser={"UserName"}/>

@@ -1,19 +1,30 @@
-import { Typography, Card, Avatar, CardContent } from "@mui/material";
+import {Typography, Card, Avatar, CardContent} from "@mui/material";
 
-interface CurrentPlayerComponentProps{
+interface CurrentPlayerComponentProps {
     currentUser: string;
 }
 
-export function CurrentPlayerComponent({ currentUser }: CurrentPlayerComponentProps) {
+export function CurrentPlayerComponent({currentUser}: CurrentPlayerComponentProps) {
     return (
-        <Card sx={{ display: "flex", alignItems: "center", padding: 2, width:"25%", mt:2 }}>
+        <Card
+            sx={{
+                display: "flex",
+                alignItems: "center",
+                padding: 2,
+                width: "25%",
+                mt: 2,
+                position: "absolute",
+                top:50,
+                left:20
+            }}
+        >
             <Avatar
                 src="https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png"
                 alt="Player"
-                sx={{ width: 64, height: 64, marginRight: 2 }}
+                sx={{width: 64, height: 64, marginRight: 2}}
             />
 
-            <CardContent sx={{ padding: 0 }}>
+            <CardContent sx={{padding: 0}}>
                 <Typography variant="body1">
                     Current player: {currentUser}
                 </Typography>

@@ -1,30 +1,7 @@
-import {Box, Stack, Typography, Divider} from "@mui/material";
+import {Box, Stack, Divider} from "@mui/material";
 import {useGameBoard} from "../hooks/useGameBoard.ts";
 import {Fragment} from "react";
-
-
-interface GameBoardCellProps {
-    content: string;
-    size?: number;
-}
-
-function GameBoardCell({content, size = 50}: GameBoardCellProps) {
-    return (
-        <>
-            <Box sx={{
-                width: size,
-                height: size,
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center"
-            }}>
-                <Typography fontWeight={"bold"} fontSize={size}>
-                    {content}
-                </Typography>
-            </Box>
-        </>
-    )
-}
+import {GameBoardCell} from "./GameBoardCell.tsx";
 
 export function GameBoard() {
     const {gameboard} = useGameBoard();

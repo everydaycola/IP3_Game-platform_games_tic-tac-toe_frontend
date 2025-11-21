@@ -7,16 +7,18 @@ export const theme = createTheme({
             palette: {
                 mode: "light",
                 primary: {
-                    main: colors.lightBlue,
-                    contrastText:colors.white,
+                    main: colors.white,
+                    contrastText:colors.lightBlue,
                 },
                 secondary:{
                     main:colors.lightOrange,
                     contrastText:colors.white,
                 },
                 background: {
-                    default: colors.lightBlue,
-                    paper: colors.white,
+                    default: colors.white,
+                },
+                text:{
+                    primary:colors.lightBlue
                 }
             },
         },
@@ -33,7 +35,9 @@ export const theme = createTheme({
                 },
                 background: {
                     default: colors.lightBlue,
-                    paper: colors.white,
+                },
+                text:{
+                    primary:colors.white
                 }
             },
         },

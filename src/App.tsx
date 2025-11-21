@@ -1,13 +1,14 @@
 import {CssBaseline, ThemeProvider} from "@mui/material";
 import {theme} from "./config/theme/theme.ts";
-import {WelcomeComponent} from "./components/WelcomeComponent.tsx";
+import {GamePage} from "./pages/GamePage.tsx";
+
 
 function App() {
     return (
         <>
             <ThemeProvider theme={theme}>
                 <CssBaseline/>
-                <WelcomeComponent/>
+                <GamePage/>
             </ThemeProvider>
         </>
     )

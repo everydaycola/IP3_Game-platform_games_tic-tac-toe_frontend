@@ -1,11 +1,14 @@
 import {Box, Stack, Divider, useMediaQuery} from "@mui/material";
-import {useGameBoard} from "../hooks/useGameBoard.ts";
 import {Fragment} from "react";
 import {GameBoardCell} from "./GameBoardCell.tsx";
 import {theme} from "../config/theme/theme.ts";
+import type {GameBoard} from "../models/GameBoard.ts";
 
-export function GameBoard() {
-    const {gameboard} = useGameBoard();
+interface GameBoardProps{
+    gameboard: GameBoard
+}
+
+export function GameBoard({gameboard}:GameBoardProps) {
     const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
 
     return (

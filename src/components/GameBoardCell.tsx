@@ -14,8 +14,9 @@ export function GameBoardCell({content, size = 50}: GameBoardCellProps) {
                 height: size,
                 display: "flex",
                 justifyContent: "center",
-                alignItems: "center"
-            }}>
+                alignItems: "center",
+            }}
+            >
                 <Typography fontWeight={"bold"} fontSize={size}>
                     {content}
                 </Typography>

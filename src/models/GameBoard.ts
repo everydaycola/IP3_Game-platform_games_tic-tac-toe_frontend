@@ -3,6 +3,9 @@
 import type {GameBoardCellContent} from "./GameBoardCellContent.ts";
 
 export type GameBoard={
+    id:string;
     board: GameBoardCellContent[][],
-    atTurn: string
+    player1:string;
+    player2:string;
+    atTurn: boolean;
 };

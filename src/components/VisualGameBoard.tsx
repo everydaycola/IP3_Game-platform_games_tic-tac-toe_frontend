@@ -8,7 +8,7 @@ interface GameBoardProps{
     gameboard: GameBoard
 }
 
-export function GameBoard({gameboard}:GameBoardProps) {
+export function VisualGameBoard({gameboard}:GameBoardProps) {
     const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
 
     return (

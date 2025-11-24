@@ -1,20 +1,104 @@
-import { Typography, Box, Stack} from "@mui/material";
-import {GameBoard} from "../components/GameBoard.tsx";
+import {type MouseEvent, useEffect, useState} from "react";
+import {Typography, Box, Stack, Button, Paper, useTheme, Snackbar, Alert} from "@mui/material";
+import {useStartNewGame} from "../hooks/useStartNewGame.ts";
+import type {MatchRequest} from "../models/MatchRequest.ts";
+import {VisualGameBoard} from "../components/VisualGameBoard.tsx";
 import {CurrentPlayerComponent} from "../components/CurrentPlayerComponent.tsx";
-import {useGameBoard} from "../hooks/useGameBoard.ts";
 
-//Todo when we connect with the backend its important to retrieve the actualy users name.
+//actual users are now not fetched yet since we don't have auth.
+const players: MatchRequest = {
+    player1: "b85182a8-68f8-4d42-b0d5-6166bf2e8284",
+    player2: "7ad223bd-bf5e-4945-8284-3a9c81e4e7a9"
+}
+
 export function GamePage() {
-    const {gameboard} = useGameBoard();
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
+    const [yourTurnAlertOpen, setYourTurnAlertOpen] = useState(false);
+    const {createGame, isPending, data} = useStartNewGame();
+    const theme = useTheme();
+
+    useEffect(() => {
+        if (data?.atTurn) {
+            setYourTurnAlertOpen(true);
+        }
+    }, [data?.atTurn]);
+
+    if (isPending) {
+        return <div>Starting a new game...</div>
+    }
+
+    function handleMoveWhileNotAtTurn(e: MouseEvent) {
+        e.stopPropagation();
+        setSnackbarOpen(true);
+    }
+
     return (
-        <Box
-            sx={{p:2, position:"relative"}}
-        >
-            <Typography variant={"h4"}>Tic Tac Toe</Typography>
-            <CurrentPlayerComponent currentUser={gameboard.atTurn}/>
-            <Stack sx={{width:"100%", display:"flex", alignItems:"center", justifyContent:"center"}}>
-                <GameBoard gameboard={gameboard}/>
-            </Stack>
-        </Box>
+        <>
+            <Box
+                sx={{p: 2, position: "relative"}}
+            >
+                {data &&
+                    <Paper
+                        className={"overlay"}
+                        sx={{
+                            zIndex: 100,
+                            position: "absolute",
+                            height: "100vh",
+                            top: 0,
+                            opacity: 0.3,
+                            left: 0,
+                            right: 0,
+                            bottom: 0,
+                            display: data.atTurn ? "none" : "initial",
+                            background: theme.palette.primary.main,
+                        }}
+                        onClick={(e) => {
+                            handleMoveWhileNotAtTurn(e)
+                        }}
+                    />
+                }
+                <Stack direction={"row"}>
+                    <Typography variant={"h4"}>Tic Tac Toe</Typography>
+                    {!data &&
+                        <Button variant={"contained"}
+                                sx={{ml: 2}}
+                                onClick={() => createGame(players)}>
+                            (DEV_BUTTON) Start a game
+                        </Button>}
+                </Stack>
+                {data &&
+                    <>
+                        <CurrentPlayerComponent isCurrentlyPlaying={data.atTurn}
+                                                currentUser={data.atTurn ? data.player1 : data.player2}/>
+                        <Stack sx={{width: "100%", display: "flex", alignItems: "center", justifyContent: "center"}}>
+                            <VisualGameBoard gameboard={data}/>
+                        </Stack>
+                    </>
+                }
+
+
+            </Box>
+            <Snackbar
+                open={snackbarOpen}
+                autoHideDuration={3000}
+                onClose={() => setSnackbarOpen(false)}
+                anchorOrigin={{vertical: "top", horizontal: "center"}}
+            >
+                <Alert severity="warning"
+                       onClose={() => setSnackbarOpen(false)}>
+                    Het is niet jouw beurt :'(
+                </Alert>
+            </Snackbar>
+            <Snackbar
+                open={yourTurnAlertOpen}
+                autoHideDuration={3000}
+                onClose={() => setYourTurnAlertOpen(false)}
+                anchorOrigin={{vertical: "top", horizontal: "center"}}
+            >
+                <Typography>
+                    Het is jouw beurt!
+                </Typography>
+            </Snackbar>
+        </>
     );
 }

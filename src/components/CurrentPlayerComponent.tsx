@@ -1,10 +1,12 @@
-import {Typography, Card, Avatar, CardContent} from "@mui/material";
+import {Typography, Card, Avatar, CardContent, useTheme} from "@mui/material";
 
 interface CurrentPlayerComponentProps {
     currentUser: string;
+    isCurrentlyPlaying: boolean;
 }
 
-export function CurrentPlayerComponent({currentUser}: CurrentPlayerComponentProps) {
+export function CurrentPlayerComponent({isCurrentlyPlaying, currentUser}: CurrentPlayerComponentProps) {
+    const theme = useTheme();
     return (
         <Card
             sx={{
@@ -14,8 +16,10 @@ export function CurrentPlayerComponent({currentUser}: CurrentPlayerComponentProp
                 width: "25%",
                 mt: 2,
                 position: "absolute",
-                top:50,
-                left:20
+                top: 50,
+                left: 20,
+                color: isCurrentlyPlaying ? theme.palette.primary.contrastText :  theme.palette.secondary.main,
+                border: `5px solid ${isCurrentlyPlaying ?   theme.palette.primary.contrastText :  theme.palette.secondary.main}`
             }}
         >
             <Avatar
@@ -25,9 +29,15 @@ export function CurrentPlayerComponent({currentUser}: CurrentPlayerComponentProp
             />
 
             <CardContent sx={{padding: 0}}>
-                <Typography variant="body1">
-                    Current player: {currentUser}
-                </Typography>
+                {isCurrentlyPlaying ?
+                    <Typography sx={{fontWeight: "bold"}}>
+                        Het is jouw beurt!
+                    </Typography>
+                    :
+                    <Typography>
+                        Speler aan beurt: {currentUser}
+                    </Typography>
+                }
                 <Typography variant="h4">X</Typography>
             </CardContent>
         </Card>

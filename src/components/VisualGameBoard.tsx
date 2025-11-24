@@ -12,7 +12,7 @@ export function VisualGameBoard({gameboard}:GameBoardProps) {
     const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
 
     return (
-        <Box>
+        <Box sx={{position:"relative"}}>
             <Stack direction="column" spacing={0}>
                 {gameboard.board.map((row, rowIdx) => (
                     <Fragment key={rowIdx}>

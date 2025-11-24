@@ -1,4 +1,4 @@
 export const gameQueryKeys={
-    current:["currentgame"] as const,
+    current:["currentGame"] as const,
 }
 

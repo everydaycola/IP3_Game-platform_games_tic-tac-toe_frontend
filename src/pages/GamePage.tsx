@@ -1,22 +1,19 @@
 import {type MouseEvent, useEffect, useState} from "react";
 import {Typography, Box, Stack, Button, Paper, useTheme, Snackbar, Alert} from "@mui/material";
 import {useStartNewGame} from "../hooks/useStartNewGame.ts";
-import type {MatchRequestAi} from "../models/MatchRequest.ts";
 import {VisualGameBoard} from "../components/VisualGameBoard.tsx";
 import {CurrentPlayerComponent} from "../components/CurrentPlayerComponent.tsx";
 import {useAiMove} from "../hooks/useAiMove.ts";
 import {useGameBoard} from "../hooks/useGameBoard.ts";
 import {EndScreen} from "../components/EndScreen.tsx";
+import {useCurrentPlayerSessionStore} from "../store/gameStore.ts";
 
-
-const player: MatchRequestAi = {
-    player: "b85182a8-68f8-4d42-b0d5-6166bf2e8284",
-}
 
 export function GamePage() {
     const {createGame, isPending} = useStartNewGame();
-    const {gameState,isGamePending} = useGameBoard();
+    const {gameState} = useGameBoard();
     const {requestAiMove} = useAiMove();
+    const currentPlayerId = useCurrentPlayerSessionStore((state) => state.currentPlayerId)
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const theme = useTheme();
 
@@ -28,7 +25,7 @@ export function GamePage() {
     }, [gameState?.atTurn, gameState?.status]);
 
 
-    if (isPending || isGamePending) {
+    if (isPending) {
         return (<Stack
             direction={"column"}
             alignItems={"center"}
@@ -42,6 +39,20 @@ export function GamePage() {
         </Stack>)
     }
 
+    if(currentPlayerId === null){
+        return (<Stack
+            direction={"column"}
+            alignItems={"center"}
+            justifyContent={"center"}
+            sx={{
+                p: 4,
+                height: "100svh"
+            }}
+        >
+            <Typography variant={"h4"}>Player not signed in... Logout and try again!</Typography>
+        </Stack>)
+    }
+
     function handleMoveWhileNotAtTurn(e: MouseEvent) {
         e.stopPropagation();
         setSnackbarOpen(true);
@@ -50,7 +61,7 @@ export function GamePage() {
     if (gameState?.status === "WON" || gameState?.status === "DRAW") {
         return <EndScreen
             gameBoard={gameState}
-            createGame={() => createGame(player)}
+            createGame={() => createGame({player: currentPlayerId})}
             winningUser={gameState.winner}
             status={gameState.status}/>;
     }
@@ -85,7 +96,7 @@ export function GamePage() {
                     {!gameState &&
                         <Button variant={"contained"}
                                 sx={{ml: 2}}
-                                onClick={() => createGame(player)}>
+                                onClick={() => createGame({player: currentPlayerId})}>
                             (DEV_BUTTON) Start a game
                         </Button>}
                 </Stack>

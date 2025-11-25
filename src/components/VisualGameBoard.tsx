@@ -6,9 +6,10 @@ import type {GameBoard} from "../models/GameBoard.ts";
 
 interface GameBoardProps {
     gameboard: GameBoard
+    isInteractive?: boolean
 }
 
-export function VisualGameBoard({gameboard}: GameBoardProps) {
+export function VisualGameBoard({gameboard,isInteractive=true}: GameBoardProps) {
     const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
 
     return (
@@ -26,6 +27,7 @@ export function VisualGameBoard({gameboard}: GameBoardProps) {
                                         gameId={gameboard.id}
                                         rowIdx={rowIdx}
                                         columnIdx={colIdx}
+                                        isInteractive={isInteractive}
                                         content={cell !== "_" ? cell : ""}
                                         size={isSmallScreen ? 75 : 150}
                                     />

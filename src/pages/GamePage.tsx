@@ -6,6 +6,7 @@ import {VisualGameBoard} from "../components/VisualGameBoard.tsx";
 import {CurrentPlayerComponent} from "../components/CurrentPlayerComponent.tsx";
 import {useAiMove} from "../hooks/useAiMove.ts";
 import {useGameBoard} from "../hooks/useGameBoard.ts";
+import {EndScreen} from "../components/EndScreen.tsx";
 
 //actual users are now not fetched yet since we don't have auth.
 const players: MatchRequest = {
@@ -16,19 +17,17 @@ const players: MatchRequest = {
 export function GamePage() {
     const {createGame, isPending, newGame} = useStartNewGame();
     const gameId = newGame?.id ?? null;
-    const {gameState} = useGameBoard(gameId,{ enabled: !!newGame?.id } );
+    const {gameState} = useGameBoard(gameId, {enabled: !!newGame?.id});
     const {makeAiMove} = useAiMove("7ad223bd-bf5e-4945-8284-3a9c81e4e7a9");
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const theme = useTheme();
 
-
-
     useEffect(() => {
-        if(!gameState?.atTurn && gameState){
+        if (!gameState?.atTurn && gameState && gameState.status === "IN_PROGRESS") {
             console.log("Using the AI player.");
             makeAiMove(gameState);
         }
-    }, [gameState?.atTurn]);
+    }, [gameState?.atTurn, gameState?.status]);
 
 
     if (isPending) {
@@ -40,12 +39,20 @@ export function GamePage() {
         setSnackbarOpen(true);
     }
 
+    if ( gameState?.status === "WON" || gameState?.status === "DRAW") {
+        return <EndScreen
+            gameBoard={gameState}
+            createGame={() => createGame(players)}
+            winningUser={gameState.winner}
+            status={gameState.status}/>;
+    }
 
     return (
         <>
             <Box
                 sx={{p: 2, position: "relative"}}
             >
+
                 {gameState &&
                     <Paper
                         className={"overlay"}

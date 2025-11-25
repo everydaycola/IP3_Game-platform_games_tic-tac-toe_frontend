@@ -1,31 +1,30 @@
 import {type MouseEvent, useEffect, useState} from "react";
 import {Typography, Box, Stack, Button, Paper, useTheme, Snackbar, Alert} from "@mui/material";
 import {useStartNewGame} from "../hooks/useStartNewGame.ts";
-import type {MatchRequest} from "../models/MatchRequest.ts";
+import type { MatchRequestAi} from "../models/MatchRequest.ts";
 import {VisualGameBoard} from "../components/VisualGameBoard.tsx";
 import {CurrentPlayerComponent} from "../components/CurrentPlayerComponent.tsx";
 import {useAiMove} from "../hooks/useAiMove.ts";
 import {useGameBoard} from "../hooks/useGameBoard.ts";
 import {EndScreen} from "../components/EndScreen.tsx";
 
-//actual users are now not fetched yet since we don't have auth.
-const players: MatchRequest = {
-    player1: "b85182a8-68f8-4d42-b0d5-6166bf2e8284",
-    player2: "7ad223bd-bf5e-4945-8284-3a9c81e4e7a9"
+
+const player: MatchRequestAi={
+    player: "b85182a8-68f8-4d42-b0d5-6166bf2e8284",
 }
 
 export function GamePage() {
     const {createGame, isPending, newGame} = useStartNewGame();
     const gameId = newGame?.id ?? null;
     const {gameState} = useGameBoard(gameId, {enabled: !!newGame?.id});
-    const {makeAiMove} = useAiMove("7ad223bd-bf5e-4945-8284-3a9c81e4e7a9");
+    const {requestAiMove} = useAiMove();
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const theme = useTheme();
 
     useEffect(() => {
         if (!gameState?.atTurn && gameState && gameState.status === "IN_PROGRESS") {
             console.log("Using the AI player.");
-            makeAiMove(gameState);
+            requestAiMove(gameState.id);
         }
     }, [gameState?.atTurn, gameState?.status]);
 
@@ -42,7 +41,7 @@ export function GamePage() {
     if ( gameState?.status === "WON" || gameState?.status === "DRAW") {
         return <EndScreen
             gameBoard={gameState}
-            createGame={() => createGame(players)}
+            createGame={() => createGame(player)}
             winningUser={gameState.winner}
             status={gameState.status}/>;
     }
@@ -78,7 +77,7 @@ export function GamePage() {
                     {!gameState &&
                         <Button variant={"contained"}
                                 sx={{ml: 2}}
-                                onClick={() => createGame(players)}>
+                                onClick={() => createGame(player)}>
                             (DEV_BUTTON) Start a game
                         </Button>}
                 </Stack>

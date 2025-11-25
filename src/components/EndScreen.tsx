@@ -26,7 +26,7 @@ export function EndScreen({gameBoard,winningUser,status,createGame}: EndScreenPr
                     <Typography variant={"h2"} sx={{m:2}}>
                        Eindstatus spelbord
                     </Typography>
-                    <VisualGameBoard gameboard={gameBoard}/>
+                    <VisualGameBoard isInteractive={false} gameboard={gameBoard}/>
                 </Stack>
                 <Stack
                     direction={"column"}

@@ -10,14 +10,16 @@ interface GameBoardCellProps {
     columnIdx: number;
     content: string;
     size?: number;
+    isInteractive?:boolean;
 }
 
-export function GameBoardCell({gameId, rowIdx, columnIdx, content, size = 50}: GameBoardCellProps) {
+export function GameBoardCell({gameId, rowIdx, columnIdx, content, size = 50,isInteractive=true}: GameBoardCellProps) {
     const theme = useTheme();
     const {requestMove} = useNewGameMove();
     const [notifyWrongPlacement, setNotifyWrongPlacement] = useState(false);
 
     function handleCellSelection() {
+        if(!isInteractive){return;}
         if (content != "") {
             setNotifyWrongPlacement(true);
             return;

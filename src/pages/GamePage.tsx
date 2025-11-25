@@ -1,7 +1,7 @@
 import {type MouseEvent, useEffect, useState} from "react";
 import {Typography, Box, Stack, Button, Paper, useTheme, Snackbar, Alert} from "@mui/material";
 import {useStartNewGame} from "../hooks/useStartNewGame.ts";
-import type { MatchRequestAi} from "../models/MatchRequest.ts";
+import type {MatchRequestAi} from "../models/MatchRequest.ts";
 import {VisualGameBoard} from "../components/VisualGameBoard.tsx";
 import {CurrentPlayerComponent} from "../components/CurrentPlayerComponent.tsx";
 import {useAiMove} from "../hooks/useAiMove.ts";
@@ -9,14 +9,13 @@ import {useGameBoard} from "../hooks/useGameBoard.ts";
 import {EndScreen} from "../components/EndScreen.tsx";
 
 
-const player: MatchRequestAi={
+const player: MatchRequestAi = {
     player: "b85182a8-68f8-4d42-b0d5-6166bf2e8284",
 }
 
 export function GamePage() {
-    const {createGame, isPending, newGame} = useStartNewGame();
-    const gameId = newGame?.id ?? null;
-    const {gameState} = useGameBoard(gameId, {enabled: !!newGame?.id});
+    const {createGame, isPending} = useStartNewGame();
+    const {gameState,isGamePending} = useGameBoard();
     const {requestAiMove} = useAiMove();
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const theme = useTheme();
@@ -29,8 +28,18 @@ export function GamePage() {
     }, [gameState?.atTurn, gameState?.status]);
 
 
-    if (isPending) {
-        return <div>Starting a new game...</div>
+    if (isPending || isGamePending) {
+        return (<Stack
+            direction={"column"}
+            alignItems={"center"}
+            justifyContent={"center"}
+            sx={{
+                p: 4,
+                height: "100svh"
+            }}
+        >
+            <Typography variant={"h4"}>Game starting...</Typography>
+        </Stack>)
     }
 
     function handleMoveWhileNotAtTurn(e: MouseEvent) {
@@ -38,7 +47,7 @@ export function GamePage() {
         setSnackbarOpen(true);
     }
 
-    if ( gameState?.status === "WON" || gameState?.status === "DRAW") {
+    if (gameState?.status === "WON" || gameState?.status === "DRAW") {
         return <EndScreen
             gameBoard={gameState}
             createGame={() => createGame(player)}
@@ -51,7 +60,6 @@ export function GamePage() {
             <Box
                 sx={{p: 2, position: "relative"}}
             >
-
                 {gameState &&
                     <Paper
                         className={"overlay"}

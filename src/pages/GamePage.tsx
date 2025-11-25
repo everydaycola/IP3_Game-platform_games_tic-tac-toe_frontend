@@ -4,6 +4,8 @@ import {useStartNewGame} from "../hooks/useStartNewGame.ts";
 import type {MatchRequest} from "../models/MatchRequest.ts";
 import {VisualGameBoard} from "../components/VisualGameBoard.tsx";
 import {CurrentPlayerComponent} from "../components/CurrentPlayerComponent.tsx";
+import {useAiMove} from "../hooks/useAiMove.ts";
+import {useGameBoard} from "../hooks/useGameBoard.ts";
 
 //actual users are now not fetched yet since we don't have auth.
 const players: MatchRequest = {
@@ -12,16 +14,22 @@ const players: MatchRequest = {
 }
 
 export function GamePage() {
+    const {createGame, isPending, newGame} = useStartNewGame();
+    const gameId = newGame?.id ?? null;
+    const {gameState} = useGameBoard(gameId,{ enabled: !!newGame?.id } );
+    const {makeAiMove} = useAiMove("7ad223bd-bf5e-4945-8284-3a9c81e4e7a9");
     const [snackbarOpen, setSnackbarOpen] = useState(false);
-    const [yourTurnAlertOpen, setYourTurnAlertOpen] = useState(false);
-    const {createGame, isPending, data} = useStartNewGame();
     const theme = useTheme();
 
+
+
     useEffect(() => {
-        if (data?.atTurn) {
-            setYourTurnAlertOpen(true);
+        if(!gameState?.atTurn && gameState){
+            console.log("Using the AI player.");
+            makeAiMove(gameState);
         }
-    }, [data?.atTurn]);
+    }, [gameState?.atTurn]);
+
 
     if (isPending) {
         return <div>Starting a new game...</div>
@@ -32,12 +40,13 @@ export function GamePage() {
         setSnackbarOpen(true);
     }
 
+
     return (
         <>
             <Box
                 sx={{p: 2, position: "relative"}}
             >
-                {data &&
+                {gameState &&
                     <Paper
                         className={"overlay"}
                         sx={{
@@ -49,7 +58,7 @@ export function GamePage() {
                             left: 0,
                             right: 0,
                             bottom: 0,
-                            display: data.atTurn ? "none" : "initial",
+                            display: gameState.atTurn ? "none" : "initial",
                             background: theme.palette.primary.main,
                         }}
                         onClick={(e) => {
@@ -59,24 +68,22 @@ export function GamePage() {
                 }
                 <Stack direction={"row"}>
                     <Typography variant={"h4"}>Tic Tac Toe</Typography>
-                    {!data &&
+                    {!gameState &&
                         <Button variant={"contained"}
                                 sx={{ml: 2}}
                                 onClick={() => createGame(players)}>
                             (DEV_BUTTON) Start a game
                         </Button>}
                 </Stack>
-                {data &&
+                {gameState &&
                     <>
-                        <CurrentPlayerComponent isCurrentlyPlaying={data.atTurn}
-                                                currentUser={data.atTurn ? data.player1 : data.player2}/>
+                        <CurrentPlayerComponent isCurrentlyPlaying={gameState.atTurn}
+                                                currentUser={gameState.atTurn ? gameState.player1 : gameState.player2}/>
                         <Stack sx={{width: "100%", display: "flex", alignItems: "center", justifyContent: "center"}}>
-                            <VisualGameBoard gameboard={data}/>
+                            <VisualGameBoard gameboard={gameState}/>
                         </Stack>
                     </>
                 }
-
-
             </Box>
             <Snackbar
                 open={snackbarOpen}
@@ -88,16 +95,6 @@ export function GamePage() {
                        onClose={() => setSnackbarOpen(false)}>
                     Het is niet jouw beurt :'(
                 </Alert>
-            </Snackbar>
-            <Snackbar
-                open={yourTurnAlertOpen}
-                autoHideDuration={3000}
-                onClose={() => setYourTurnAlertOpen(false)}
-                anchorOrigin={{vertical: "top", horizontal: "center"}}
-            >
-                <Typography>
-                    Het is jouw beurt!
-                </Typography>
             </Snackbar>
         </>
     );

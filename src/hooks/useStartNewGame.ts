@@ -6,7 +6,7 @@ import {gameQueryKeys} from "../config/api/querykeys";
 export function useStartNewGame(){
     const queryClient = useQueryClient();
 
-    const{mutate,isPending,isError,data} = useMutation(
+    const{mutate,isPending,isError,data: newGame} = useMutation(
         {
             mutationFn: async(players: MatchRequest) => {
                 return startGame(players);
@@ -14,14 +14,13 @@ export function useStartNewGame(){
             onSuccess:() => {
                 queryClient.invalidateQueries({queryKey: gameQueryKeys.current});
             }
-
         }
     )
 
-    return{
-        isPending,
-        isError,
-        createGame:mutate,
-        data
-    }
+    return {
+        isPending: isPending,
+        isError: isError,
+        createGame: mutate,
+        newGame
+    };
 }

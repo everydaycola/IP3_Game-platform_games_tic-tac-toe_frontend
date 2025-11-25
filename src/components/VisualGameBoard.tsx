@@ -4,30 +4,43 @@ import {GameBoardCell} from "./GameBoardCell.tsx";
 import {theme} from "../config/theme/theme.ts";
 import type {GameBoard} from "../models/GameBoard.ts";
 
-interface GameBoardProps{
+interface GameBoardProps {
     gameboard: GameBoard
 }
 
-export function VisualGameBoard({gameboard}:GameBoardProps) {
+export function VisualGameBoard({gameboard}: GameBoardProps) {
     const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
 
     return (
-        <Box sx={{position:"relative"}}>
-            <Stack direction="column" spacing={0}>
+        <Box sx={{position: "relative"}}>
+            <Stack direction="row"
+                   spacing={0}>
                 {gameboard.board.map((row, rowIdx) => (
                     <Fragment key={rowIdx}>
-                        <Stack direction="row" spacing={0} alignItems="center">
+                        <Stack direction="column"
+                               spacing={0}
+                               alignItems="center">
                             {row.map((cell, colIdx) => (
                                 <Fragment key={colIdx}>
-                                    <GameBoardCell content={cell !== "_" ? cell : ""} size={isSmallScreen? 75:150}/>
+                                    <GameBoardCell
+                                        gameId={gameboard.id}
+                                        rowIdx={rowIdx}
+                                        columnIdx={colIdx}
+                                        content={cell !== "_" ? cell : ""}
+                                        size={isSmallScreen ? 75 : 150}
+                                    />
                                     {colIdx < row.length - 1 && (
-                                        <Divider orientation="vertical" flexItem sx={{ borderRightWidth: isSmallScreen? 7:15 }}/>
+                                        <Divider orientation="horizontal"
+                                                 flexItem
+                                                 sx={{borderTopWidth: isSmallScreen ? 7 : 15}}/>
                                     )}
                                 </Fragment>
                             ))}
                         </Stack>
-                        {rowIdx < gameboard.board.length -1 &&
-                            <Divider orientation="horizontal" sx={{borderTopWidth:isSmallScreen? 7:15}} flexItem/>
+                        {rowIdx < gameboard.board.length - 1 &&
+                            <Divider orientation="vertical"
+                                     sx={{borderRightWidth: isSmallScreen ? 7 : 15}}
+                                     flexItem/>
                         }
                     </Fragment>
                 ))}

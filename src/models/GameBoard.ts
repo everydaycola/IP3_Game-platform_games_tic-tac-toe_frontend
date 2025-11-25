@@ -1,4 +1,4 @@
-//In backend this is called GameState since state would emply this being a 'useState' which it isn't.
+//In backend this is called GameState since state would empty this being a 'useState' which it isn't.
 
 import type {GameBoardCellContent} from "./GameBoardCellContent.ts";
 

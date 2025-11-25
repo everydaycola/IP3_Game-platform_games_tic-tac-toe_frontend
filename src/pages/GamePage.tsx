@@ -17,13 +17,13 @@ const players: MatchRequest = {
 export function GamePage() {
     const {createGame, isPending, newGame} = useStartNewGame();
     const gameId = newGame?.id ?? null;
-    const {gameState} = useGameBoard(gameId,{ enabled: !!newGame?.id } );
+    const {gameState} = useGameBoard(gameId, {enabled: !!newGame?.id});
     const {makeAiMove} = useAiMove("7ad223bd-bf5e-4945-8284-3a9c81e4e7a9");
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const theme = useTheme();
 
     useEffect(() => {
-        if(!gameState?.atTurn && gameState && gameState.status === "IN_PROGRESS"){
+        if (!gameState?.atTurn && gameState && gameState.status === "IN_PROGRESS") {
             console.log("Using the AI player.");
             makeAiMove(gameState);
         }
@@ -39,8 +39,12 @@ export function GamePage() {
         setSnackbarOpen(true);
     }
 
-    if (gameState?.status === "WON" || gameState?.status === "DRAW") {
-        return <EndScreen createGame={() => createGame(players)} winningUser={gameState.winner} status={gameState.status} />;
+    if ( gameState?.status === "WON" || gameState?.status === "DRAW") {
+        return <EndScreen
+            gameBoard={gameState}
+            createGame={() => createGame(players)}
+            winningUser={gameState.winner}
+            status={gameState.status}/>;
     }
 
     return (
@@ -48,6 +52,7 @@ export function GamePage() {
             <Box
                 sx={{p: 2, position: "relative"}}
             >
+
                 {gameState &&
                     <Paper
                         className={"overlay"}

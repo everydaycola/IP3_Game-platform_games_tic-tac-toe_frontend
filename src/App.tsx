@@ -5,6 +5,8 @@ import {QueryClientProvider} from "@tanstack/react-query";
 import {queryClient} from "./config/api";
 import {ReactQueryDevtools} from "@tanstack/react-query-devtools";
 import {useCurrentPlayerSessionStore} from "./store/gameStore.ts";
+import SecurityContextProvider from "./context/SecurityContextProvider.tsx";
+import {RouteGuard} from "./components/RouteGuard.tsx";
 
 function App() {
     const updateCurrentPlayerId = useCurrentPlayerSessionStore((state) => state.updateCurrentPlayerId)
@@ -12,11 +14,15 @@ function App() {
     return (
         <>
             <QueryClientProvider client={queryClient}>
-                <ThemeProvider theme={theme}>
-                    <CssBaseline/>
-                    <GamePage/>
-                </ThemeProvider>
-                <ReactQueryDevtools initialIsOpen={false} />
+                <SecurityContextProvider>
+                    <ThemeProvider theme={theme}>
+                        <CssBaseline/>
+                        <RouteGuard>
+                            <GamePage/>
+                        </RouteGuard>
+                    </ThemeProvider>
+                    <ReactQueryDevtools initialIsOpen={false}/>
+                </SecurityContextProvider>
             </QueryClientProvider>
         </>
     )

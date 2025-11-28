@@ -10,7 +10,7 @@ interface PlayerSessionActions {
     updateCurrentPlayerId: (id:string | null) => void;
 }
 
-export const useCurrentPlayerSessionStore = create<PlayerSessionState & PlayerSessionActions>((set, get) => ({
+export const useCurrentPlayerSessionStore = create<PlayerSessionState & PlayerSessionActions>((set) => ({
     //States
     currentGameId: null,
     currentPlayerId: null,

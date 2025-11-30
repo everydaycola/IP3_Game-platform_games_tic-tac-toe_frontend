@@ -3,9 +3,9 @@ import type {GameBoard} from "../models/GameBoard.ts";
 import type {MatchRequest, MatchRequestAi} from "../models/MatchRequest.ts";
 import type {MoveRequest} from "../models/MoveRequest.ts";
 
-async function getOngoingGame(userId: string) {
+async function getOngoingGame() {
     try {
-        const {data} = await axios.get<GameBoard>(`/players/${userId}/playing`)
+        const {data} = await axios.get<GameBoard>(`/matches/playing`)
         return data as GameBoard;
     }catch (err) {
         //If it's 404 its not actualy an error its just that there is no active game going on.
@@ -31,7 +31,7 @@ export async function startGame(data: MatchRequest) {
 }
 
 export async function startGameWithAi(data: MatchRequestAi) {
-    const ongoingGame = await getOngoingGame(data.player);
+    const ongoingGame = await getOngoingGame();
     if (ongoingGame === null) {
         const {data: newGame} = await axios.post<GameBoard>('/matches/ai', data)
         return newGame

@@ -1,4 +1,4 @@
-FROM node:24 as build
+FROM node:24 AS build
 
 WORKDIR /app
 
@@ -9,10 +9,9 @@ COPY . .
 
 RUN npm run build
 
-FROM nginx
-
+FROM nginx:alpine
+RUN apk add --no-cache nodejs npm
+RUN npm install -g envsub
 COPY --from=build /app/dist /usr/share/nginx/html
-
 EXPOSE 80
-
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["/bin/sh", "-c", "npx envsub /usr/share/nginx/html/index.html /usr/share/nginx/html/index.html && nginx -g 'daemon off;'"]

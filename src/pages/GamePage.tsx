@@ -1,6 +1,5 @@
 import {type MouseEvent, useEffect, useState} from "react";
-import {Typography, Box, Stack, Button, Paper, useTheme, Snackbar, Alert} from "@mui/material";
-import {useStartNewGame} from "../hooks/useStartNewGame.ts";
+import {Typography, Box, Stack, Paper, useTheme, Snackbar, Alert} from "@mui/material";
 import {VisualGameBoard} from "../components/VisualGameBoard.tsx";
 import {CurrentPlayerComponent} from "../components/CurrentPlayerComponent.tsx";
 import {useAiMove} from "../hooks/useAiMove.ts";
@@ -8,9 +7,7 @@ import {useGameBoard} from "../hooks/useGameBoard.ts";
 import {EndScreen} from "../components/EndScreen.tsx";
 import {useCurrentPlayerSessionStore} from "../store/gameStore.ts";
 
-
 export function GamePage() {
-    const {createGame, isPending} = useStartNewGame();
     const {gameState} = useGameBoard();
     const {requestAiMove} = useAiMove();
     const currentPlayerId = useCurrentPlayerSessionStore((state) => state.currentPlayerId)
@@ -23,21 +20,6 @@ export function GamePage() {
             requestAiMove(gameState.id);
         }
     }, [gameState?.atTurn, gameState?.status]);
-
-
-    if (isPending) {
-        return (<Stack
-            direction={"column"}
-            alignItems={"center"}
-            justifyContent={"center"}
-            sx={{
-                p: 4,
-                height: "100svh"
-            }}
-        >
-            <Typography variant={"h4"}>Game starting...</Typography>
-        </Stack>)
-    }
 
     if(currentPlayerId === null){
         return (<Stack
@@ -61,7 +43,6 @@ export function GamePage() {
     if (gameState?.status === "WON" || gameState?.status === "DRAW") {
         return <EndScreen
             gameBoard={gameState}
-            createGame={() => createGame({player: currentPlayerId})}
             winningUser={gameState.winner}
             status={gameState.status}/>;
     }
@@ -93,12 +74,6 @@ export function GamePage() {
                 }
                 <Stack direction={"row"}>
                     <Typography variant={"h4"}>Tic Tac Toe</Typography>
-                    {!gameState &&
-                        <Button variant={"contained"}
-                                sx={{ml: 2}}
-                                onClick={() => createGame({player: currentPlayerId})}>
-                            (DEV_BUTTON) Start a game
-                        </Button>}
                 </Stack>
                 {gameState &&
                     <>

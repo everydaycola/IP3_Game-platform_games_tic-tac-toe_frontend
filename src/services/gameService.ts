@@ -3,7 +3,7 @@ import type {GameBoard} from "../models/GameBoard.ts";
 import type {MatchRequest, MatchRequestAi} from "../models/MatchRequest.ts";
 import type {MoveRequest} from "../models/MoveRequest.ts";
 
-async function getOngoingGame() {
+export async function getOngoingGame() {
     try {
         const {data} = await axios.get<GameBoard>(`/matches/playing`)
         return data as GameBoard;

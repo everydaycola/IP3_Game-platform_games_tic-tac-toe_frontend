@@ -1,4 +1,4 @@
-import {Button, Stack, Typography} from "@mui/material";
+import { Stack, Typography} from "@mui/material";
 import type {GameStatus} from "../models/GameStatus.ts";
 import {VisualGameBoard} from "./VisualGameBoard.tsx";
 import type {GameBoard} from "../models/GameBoard.ts";
@@ -7,10 +7,9 @@ interface EndScreenProps {
     gameBoard:GameBoard,
     winningUser: string;
     status: GameStatus;
-    createGame: () => void;
 }
 
-export function EndScreen({gameBoard,winningUser,status,createGame}: EndScreenProps) {
+export function EndScreen({gameBoard,winningUser,status}: EndScreenProps) {
 
     return (
         <>
@@ -43,12 +42,6 @@ export function EndScreen({gameBoard,winningUser,status,createGame}: EndScreenPr
                     {status === "DRAW" &&
                         <Typography variant={"h3"}>Gelijkspel!</Typography>
                     }
-                    <Button variant={"contained"}
-                            sx={{m: 2}}
-                            onClick={createGame}
-                    >
-                        Nieuw spel starten
-                    </Button>
                 </Stack>
             </Stack>
         </>

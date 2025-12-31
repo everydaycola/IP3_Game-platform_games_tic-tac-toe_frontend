@@ -15,11 +15,11 @@ export function GamePage() {
     const theme = useTheme();
 
     useEffect(() => {
-        if (!gameState?.atTurn && gameState && gameState.status === "IN_PROGRESS") {
+        if (gameState?.isAiGame && !gameState?.atTurn && gameState && gameState.status === "IN_PROGRESS") {
             console.log("Using the AI player.");
             requestAiMove(gameState.id);
         }
-    }, [gameState?.atTurn, gameState?.status]);
+    }, [gameState?.atTurn, gameState?.status, gameState?.isAiGame]);
 
     if(currentPlayerId === null){
         return (<Stack
@@ -39,6 +39,20 @@ export function GamePage() {
         e.stopPropagation();
         setSnackbarOpen(true);
     }
+
+    function isMyTurn(){
+        if(gameState?.isAiGame){
+            return gameState.atTurn;
+        }
+        if(gameState?.atTurn){
+            return gameState.player1 === currentPlayerId;
+        }else{
+            console.log(gameState?.player2 , " " , currentPlayerId)
+            return gameState?.player2 === currentPlayerId;
+        }
+    }
+
+    console.log(isMyTurn());
 
     if (gameState?.status === "WON" || gameState?.status === "DRAW") {
         return <EndScreen
@@ -64,7 +78,7 @@ export function GamePage() {
                             left: 0,
                             right: 0,
                             bottom: 0,
-                            display: gameState.atTurn ? "none" : "initial",
+                            display: isMyTurn() ? "none" : "initial",
                             background: theme.palette.primary.main,
                         }}
                         onClick={(e) => {
@@ -77,7 +91,7 @@ export function GamePage() {
                 </Stack>
                 {gameState &&
                     <>
-                        <CurrentPlayerComponent isCurrentlyPlaying={gameState.atTurn}
+                        <CurrentPlayerComponent isCurrentlyPlaying={isMyTurn()}
                                                 currentUser={gameState.atTurn ? gameState.player1 : gameState.player2}/>
                         <Stack sx={{width: "100%", display: "flex", alignItems: "center", justifyContent: "center"}}>
                             <VisualGameBoard gameboard={gameState}/>

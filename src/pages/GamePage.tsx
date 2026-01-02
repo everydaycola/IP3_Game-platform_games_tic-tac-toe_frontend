@@ -8,6 +8,7 @@ import {EndScreen} from "../components/EndScreen.tsx";
 import {useCurrentPlayerSessionStore} from "../store/gameStore.ts";
 
 export function GamePage() {
+    //Todo: useGameBoard only returns in progress games use "getGame" from api to retrieve end results.
     const {gameState} = useGameBoard();
     const {requestAiMove} = useAiMove();
     const currentPlayerId = useCurrentPlayerSessionStore((state) => state.currentPlayerId)
@@ -47,13 +48,11 @@ export function GamePage() {
         if(gameState?.atTurn){
             return gameState.player1 === currentPlayerId;
         }else{
-            console.log(gameState?.player2 , " " , currentPlayerId)
             return gameState?.player2 === currentPlayerId;
         }
     }
 
-    console.log(isMyTurn());
-
+    console.log(gameState?.status);
     if (gameState?.status === "WON" || gameState?.status === "DRAW") {
         return <EndScreen
             gameBoard={gameState}

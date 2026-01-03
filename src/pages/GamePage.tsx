@@ -8,7 +8,6 @@ import {EndScreen} from "../components/EndScreen.tsx";
 import {useCurrentPlayerSessionStore} from "../store/gameStore.ts";
 
 export function GamePage() {
-    //Todo: useGameBoard only returns in progress games use "getGame" from api to retrieve end results.
     const {gameState} = useOngoingGameBoard();
     const updateCurrentGameId = useCurrentPlayerSessionStore((state) => state.updateCurrentGameId)
     const {requestAiMove} = useAiMove();

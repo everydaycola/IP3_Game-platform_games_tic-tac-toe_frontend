@@ -1,18 +1,11 @@
 import axios from "axios";
 import type {GameBoard} from "../models/GameBoard.ts";
-import type {MatchRequest, MatchRequestAi} from "../models/MatchRequest.ts";
+import type {MatchRequest} from "../models/MatchRequest.ts";
 import type {MoveRequest} from "../models/MoveRequest.ts";
 
 export async function getOngoingGame() {
-    try {
-        const {data} = await axios.get<GameBoard>(`/matches/playing`)
-        return data as GameBoard;
-    }catch (err) {
-        if (axios.isAxiosError(err) && err.response?.status === 404) {
-            return null;
-        }
-        throw err;
-    }
+    const {data} = await axios.get<GameBoard>(`/matches/playing`)
+    return data as GameBoard;
 }
 
 export async function getGame(gameId: string | null) {
@@ -29,14 +22,9 @@ export async function startGame(data: MatchRequest) {
     return newGame
 }
 
-export async function startGameWithAi(data: MatchRequestAi) {
-    const ongoingGame = await getOngoingGame();
-    if (ongoingGame === null) {
-        const {data: newGame} = await axios.post<GameBoard>('/matches/ai', data)
-        return newGame
-    }
-    return ongoingGame;
-
+export async function startGameWithAi() {
+    const {data: newGame} = await axios.post<GameBoard>('/matches/ai')
+    return newGame
 }
 
 export async function makeMove(gameId: string, data: MoveRequest) {

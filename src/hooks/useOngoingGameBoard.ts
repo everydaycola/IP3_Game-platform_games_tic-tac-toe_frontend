@@ -2,10 +2,10 @@ import {useQuery} from "@tanstack/react-query";
 import {getOngoingGame, getGame} from "../services/gameService.ts";
 import {gameQueryKeys} from "../config/api/querykeys";
 import {pollInterval} from "../config/realtime";
-import {useCurrentPlayerSessionStore} from "../store/gameStore.ts";
+import {useCurrentGameStore} from "../store/gameStore.ts";
 
 export function useOngoingGameBoard() {
-    const currentGameId = useCurrentPlayerSessionStore.getState().currentGameId;
+    const currentGameId = useCurrentGameStore.getState().currentGameId;
 
     const {data: gameState, isError, isPending} = useQuery({
         queryKey: gameQueryKeys.current,

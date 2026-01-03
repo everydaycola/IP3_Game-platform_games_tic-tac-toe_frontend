@@ -1,25 +1,22 @@
 import {create} from "zustand";
 
-interface PlayerSessionState {
+interface CurrentGameState {
     currentGameId: string | null;
-    currentPlayerId: string |null;
 }
 
-interface PlayerSessionActions {
+interface CurrentGameActions {
     updateCurrentGameId: (id: string | null) => void;
-    updateCurrentPlayerId: (id:string | null) => void;
 }
 
 
-export const useCurrentPlayerSessionStore = create<
-    PlayerSessionState & PlayerSessionActions
+export const useCurrentGameStore = create<
+    CurrentGameState & CurrentGameActions
 >((set) => ({
     //State
     currentGameId:
         typeof window !== "undefined"
             ? localStorage.getItem("ttt-gameid")
             : null,
-    currentPlayerId: null,
 
     // Actions
     updateCurrentGameId: (id) => {
@@ -31,8 +28,5 @@ export const useCurrentPlayerSessionStore = create<
             }
         }
         set({ currentGameId: id });
-    },
-    updateCurrentPlayerId: (id) => {
-        set({ currentPlayerId: id });
     },
 }));

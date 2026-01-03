@@ -5,13 +5,14 @@ import {CurrentPlayerComponent} from "../components/CurrentPlayerComponent.tsx";
 import {useAiMove} from "../hooks/useAiMove.ts";
 import {useOngoingGameBoard} from "../hooks/useOngoingGameBoard.ts";
 import {EndScreen} from "../components/EndScreen.tsx";
-import {useCurrentPlayerSessionStore} from "../store/gameStore.ts";
+import {useCurrentGameStore} from "../store/gameStore.ts";
+import {useSecurityStore} from "../store/securityStore.ts";
 
 export function GamePage() {
     const {gameState} = useOngoingGameBoard();
-    const updateCurrentGameId = useCurrentPlayerSessionStore((state) => state.updateCurrentGameId)
+    const updateCurrentGameId = useCurrentGameStore((state) => state.updateCurrentGameId)
     const {requestAiMove} = useAiMove();
-    const currentPlayerId = useCurrentPlayerSessionStore((state) => state.currentPlayerId)
+    const loggedInUser  = useSecurityStore((state) => state.loggedInUser);
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const theme = useTheme();
 
@@ -26,7 +27,7 @@ export function GamePage() {
         }
     }, [gameState?.id,gameState?.atTurn, gameState?.status, gameState?.isAiGame]);
 
-    if (currentPlayerId === null) {
+    if (loggedInUser?.id === null) {
         return (<Stack
             direction={"column"}
             alignItems={"center"}
@@ -50,9 +51,9 @@ export function GamePage() {
             return gameState.atTurn;
         }
         if (gameState?.atTurn) {
-            return gameState.player1 === currentPlayerId;
+            return gameState.player1 === loggedInUser?.id;
         } else {
-            return gameState?.player2 === currentPlayerId;
+            return gameState?.player2 === loggedInUser?.id;
         }
     }
 

@@ -4,14 +4,14 @@ import {GamePage} from "./pages/GamePage.tsx";
 import {QueryClientProvider} from "@tanstack/react-query";
 import {queryClient} from "./config/api";
 import {ReactQueryDevtools} from "@tanstack/react-query-devtools";
-import SecurityContextProvider from "./context/SecurityContextProvider.tsx";
 import {RouteGuard} from "./components/RouteGuard.tsx";
+import {useInitSecurity} from "./hooks/security/useInitSecurity.tsx";
 
 function App() {
+    useInitSecurity();
     return (
         <>
             <QueryClientProvider client={queryClient}>
-                <SecurityContextProvider>
                     <ThemeProvider theme={theme}>
                         <CssBaseline/>
                         <RouteGuard>
@@ -19,7 +19,6 @@ function App() {
                         </RouteGuard>
                     </ThemeProvider>
                     <ReactQueryDevtools initialIsOpen={false}/>
-                </SecurityContextProvider>
             </QueryClientProvider>
         </>
     )

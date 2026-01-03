@@ -3,26 +3,31 @@ import {Typography, Box, Stack, Paper, useTheme, Snackbar, Alert} from "@mui/mat
 import {VisualGameBoard} from "../components/VisualGameBoard.tsx";
 import {CurrentPlayerComponent} from "../components/CurrentPlayerComponent.tsx";
 import {useAiMove} from "../hooks/useAiMove.ts";
-import {useGameBoard} from "../hooks/useGameBoard.ts";
+import {useOngoingGameBoard} from "../hooks/useOngoingGameBoard.ts";
 import {EndScreen} from "../components/EndScreen.tsx";
 import {useCurrentPlayerSessionStore} from "../store/gameStore.ts";
 
 export function GamePage() {
     //Todo: useGameBoard only returns in progress games use "getGame" from api to retrieve end results.
-    const {gameState} = useGameBoard();
+    const {gameState} = useOngoingGameBoard();
+    const updateCurrentGameId = useCurrentPlayerSessionStore((state) => state.updateCurrentGameId)
     const {requestAiMove} = useAiMove();
     const currentPlayerId = useCurrentPlayerSessionStore((state) => state.currentPlayerId)
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const theme = useTheme();
 
     useEffect(() => {
+        if(gameState?.id){
+            updateCurrentGameId(gameState.id);
+        }
+
         if (gameState?.isAiGame && !gameState?.atTurn && gameState && gameState.status === "IN_PROGRESS") {
             console.log("Using the AI player.");
             requestAiMove(gameState.id);
         }
-    }, [gameState?.atTurn, gameState?.status, gameState?.isAiGame]);
+    }, [gameState?.id,gameState?.atTurn, gameState?.status, gameState?.isAiGame]);
 
-    if(currentPlayerId === null){
+    if (currentPlayerId === null) {
         return (<Stack
             direction={"column"}
             alignItems={"center"}
@@ -41,19 +46,18 @@ export function GamePage() {
         setSnackbarOpen(true);
     }
 
-    function isMyTurn(){
-        if(gameState?.isAiGame){
+    function isMyTurn() {
+        if (gameState?.isAiGame) {
             return gameState.atTurn;
         }
-        if(gameState?.atTurn){
+        if (gameState?.atTurn) {
             return gameState.player1 === currentPlayerId;
-        }else{
+        } else {
             return gameState?.player2 === currentPlayerId;
         }
     }
 
-    console.log(gameState?.status);
-    if (gameState?.status === "WON" || gameState?.status === "DRAW") {
+    if (gameState != null && (gameState.status === "WON" || gameState.status === "DRAW")) {
         return <EndScreen
             gameBoard={gameState}
             winningUser={gameState.winner}

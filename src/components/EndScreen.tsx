@@ -10,7 +10,6 @@ interface EndScreenProps {
 }
 
 export function EndScreen({gameBoard,winningUser,status}: EndScreenProps) {
-
     return (
         <>
             <Stack direction={"row"}>

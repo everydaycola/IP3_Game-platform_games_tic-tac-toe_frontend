@@ -10,15 +10,29 @@ interface PlayerSessionActions {
     updateCurrentPlayerId: (id:string | null) => void;
 }
 
-export const useCurrentPlayerSessionStore = create<PlayerSessionState & PlayerSessionActions>((set) => ({
-    //States
-    currentGameId: null,
+
+export const useCurrentPlayerSessionStore = create<
+    PlayerSessionState & PlayerSessionActions
+>((set) => ({
+    //State
+    currentGameId:
+        typeof window !== "undefined"
+            ? localStorage.getItem("ttt-gameid")
+            : null,
     currentPlayerId: null,
-    //Sessions
+
+    // Actions
     updateCurrentGameId: (id) => {
-        set({currentGameId: id});
+        if (typeof window !== "undefined") {
+            if (id === null) {
+                localStorage.removeItem("ttt-gameid");
+            } else {
+                localStorage.setItem("ttt-gameid", id);
+            }
+        }
+        set({ currentGameId: id });
     },
     updateCurrentPlayerId: (id) => {
-        set({currentPlayerId: id});
-    }
+        set({ currentPlayerId: id });
+    },
 }));

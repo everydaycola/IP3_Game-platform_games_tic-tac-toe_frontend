@@ -6,7 +6,6 @@ import {useCurrentPlayerSessionStore} from "../store/gameStore.ts";
 import type {GameBoard} from "../models/GameBoard.ts";
 
 export function useStartNewGame(){
-
     const queryClient = useQueryClient();
     const updateCurrentGameId = useCurrentPlayerSessionStore((state) => state.updateCurrentGameId)
 

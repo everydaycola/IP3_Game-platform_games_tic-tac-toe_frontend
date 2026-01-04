@@ -11,4 +11,5 @@ export type GameBoard={
     atTurn: boolean;
     status: GameStatus;
     winner:string;
+    isAiGame: boolean;
 };

@@ -1,24 +1,32 @@
 import {create} from "zustand";
 
-interface PlayerSessionState {
+interface CurrentGameState {
     currentGameId: string | null;
-    currentPlayerId: string |null;
 }
 
-interface PlayerSessionActions {
+interface CurrentGameActions {
     updateCurrentGameId: (id: string | null) => void;
-    updateCurrentPlayerId: (id:string | null) => void;
 }
 
-export const useCurrentPlayerSessionStore = create<PlayerSessionState & PlayerSessionActions>((set) => ({
-    //States
-    currentGameId: null,
-    currentPlayerId: null,
-    //Sessions
+
+export const useCurrentGameStore = create<
+    CurrentGameState & CurrentGameActions
+>((set) => ({
+    //State
+    currentGameId:
+        typeof window !== "undefined"
+            ? localStorage.getItem("ttt-gameid")
+            : null,
+
+    // Actions
     updateCurrentGameId: (id) => {
-        set({currentGameId: id});
+        if (typeof window !== "undefined") {
+            if (id === null) {
+                localStorage.removeItem("ttt-gameid");
+            } else {
+                localStorage.setItem("ttt-gameid", id);
+            }
+        }
+        set({ currentGameId: id });
     },
-    updateCurrentPlayerId: (id) => {
-        set({currentPlayerId: id});
-    }
 }));

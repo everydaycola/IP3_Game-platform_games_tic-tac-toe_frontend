@@ -1,45 +1,35 @@
 import {type MouseEvent, useEffect, useState} from "react";
-import {Typography, Box, Stack, Button, Paper, useTheme, Snackbar, Alert} from "@mui/material";
-import {useStartNewGame} from "../hooks/useStartNewGame.ts";
+import {Typography, Box, Stack, Paper, useTheme, Snackbar, Alert, Button} from "@mui/material";
 import {VisualGameBoard} from "../components/VisualGameBoard.tsx";
 import {CurrentPlayerComponent} from "../components/CurrentPlayerComponent.tsx";
 import {useAiMove} from "../hooks/useAiMove.ts";
-import {useGameBoard} from "../hooks/useGameBoard.ts";
+import {useOngoingGameBoard} from "../hooks/useOngoingGameBoard.ts";
 import {EndScreen} from "../components/EndScreen.tsx";
-import {useCurrentPlayerSessionStore} from "../store/gameStore.ts";
-
+import {useCurrentGameStore} from "../store/gameStore.ts";
+import {useSecurityStore} from "../store/securityStore.ts";
+import {useStartNewGame} from "../hooks/useStartNewGame.ts";
 
 export function GamePage() {
-    const {createGame, isPending} = useStartNewGame();
-    const {gameState} = useGameBoard();
+    const {gameState} = useOngoingGameBoard();
+    const {createGame} = useStartNewGame();
+    const updateCurrentGameId = useCurrentGameStore((state) => state.updateCurrentGameId)
     const {requestAiMove} = useAiMove();
-    const currentPlayerId = useCurrentPlayerSessionStore((state) => state.currentPlayerId)
+    const loggedInUser = useSecurityStore((state) => state.loggedInUser);
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const theme = useTheme();
 
     useEffect(() => {
-        if (!gameState?.atTurn && gameState && gameState.status === "IN_PROGRESS") {
+        if (gameState?.id) {
+            updateCurrentGameId(gameState.id);
+        }
+
+        if (gameState?.isAiGame && !gameState?.atTurn && gameState && gameState.status === "IN_PROGRESS") {
             console.log("Using the AI player.");
             requestAiMove(gameState.id);
         }
-    }, [gameState?.atTurn, gameState?.status]);
+    }, [gameState?.id, gameState?.atTurn, gameState?.status, gameState?.isAiGame]);
 
-
-    if (isPending) {
-        return (<Stack
-            direction={"column"}
-            alignItems={"center"}
-            justifyContent={"center"}
-            sx={{
-                p: 4,
-                height: "100svh"
-            }}
-        >
-            <Typography variant={"h4"}>Game starting...</Typography>
-        </Stack>)
-    }
-
-    if(currentPlayerId === null){
+    if (loggedInUser?.id === null) {
         return (<Stack
             direction={"column"}
             alignItems={"center"}
@@ -58,10 +48,20 @@ export function GamePage() {
         setSnackbarOpen(true);
     }
 
-    if (gameState?.status === "WON" || gameState?.status === "DRAW") {
+    function isMyTurn() {
+        if (gameState?.isAiGame) {
+            return gameState.atTurn;
+        }
+        if (gameState?.atTurn) {
+            return gameState.player1 === loggedInUser?.id;
+        } else {
+            return gameState?.player2 === loggedInUser?.id;
+        }
+    }
+
+    if (gameState != null && (gameState.status === "WON" || gameState.status === "DRAW")) {
         return <EndScreen
             gameBoard={gameState}
-            createGame={() => createGame({player: currentPlayerId})}
             winningUser={gameState.winner}
             status={gameState.status}/>;
     }
@@ -71,6 +71,25 @@ export function GamePage() {
             <Box
                 sx={{p: 2, position: "relative"}}
             >
+                {!gameState &&
+                    <>
+                        <Stack direction={"column"}
+                               alignItems={"center"}
+                               sx={{p: 4}}
+                               justifyContent={"center"}>
+                            <Typography variant={"h2"}>Welcome to tic-tac-toe!</Typography>
+                            <Button
+                                onClick={() => createGame()}
+                                variant={"contained"}
+                                sx={{mt: 1}}
+                            >
+                                Start a new training game!
+                            </Button>
+                        </Stack>
+                    </>
+                }
+
+
                 {gameState &&
                     <Paper
                         className={"overlay"}
@@ -83,7 +102,7 @@ export function GamePage() {
                             left: 0,
                             right: 0,
                             bottom: 0,
-                            display: gameState.atTurn ? "none" : "initial",
+                            display: isMyTurn() ? "none" : "initial",
                             background: theme.palette.primary.main,
                         }}
                         onClick={(e) => {
@@ -91,18 +110,10 @@ export function GamePage() {
                         }}
                     />
                 }
-                <Stack direction={"row"}>
-                    <Typography variant={"h4"}>Tic Tac Toe</Typography>
-                    {!gameState &&
-                        <Button variant={"contained"}
-                                sx={{ml: 2}}
-                                onClick={() => createGame({player: currentPlayerId})}>
-                            (DEV_BUTTON) Start a game
-                        </Button>}
-                </Stack>
                 {gameState &&
                     <>
-                        <CurrentPlayerComponent isCurrentlyPlaying={gameState.atTurn}
+                        <CurrentPlayerComponent isCurrentlyPlaying={isMyTurn()}
+                                                isAiGame={gameState.isAiGame}
                                                 currentUser={gameState.atTurn ? gameState.player1 : gameState.player2}/>
                         <Stack sx={{width: "100%", display: "flex", alignItems: "center", justifyContent: "center"}}>
                             <VisualGameBoard gameboard={gameState}/>

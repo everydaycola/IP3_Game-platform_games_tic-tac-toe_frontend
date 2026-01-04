@@ -3,9 +3,10 @@ import {Typography, Card, Avatar, CardContent, useTheme} from "@mui/material";
 interface CurrentPlayerComponentProps {
     currentUser: string;
     isCurrentlyPlaying: boolean;
+    isAiGame: boolean;
 }
 
-export function CurrentPlayerComponent({isCurrentlyPlaying, currentUser}: CurrentPlayerComponentProps) {
+export function CurrentPlayerComponent({isCurrentlyPlaying, currentUser, isAiGame}: CurrentPlayerComponentProps) {
     const theme = useTheme();
     return (
         <Card
@@ -35,7 +36,7 @@ export function CurrentPlayerComponent({isCurrentlyPlaying, currentUser}: Curren
                     </Typography>
                     :
                     <Typography>
-                        Speler aan beurt: {currentUser}
+                        Speler aan beurt: {isAiGame ? "TicTacBot" : currentUser}
                     </Typography>
                 }
                 <Typography variant="h4">X</Typography>

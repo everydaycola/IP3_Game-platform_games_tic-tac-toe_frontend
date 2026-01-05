@@ -3,7 +3,6 @@ import {theme} from "./config/theme/theme.ts";
 import {GamePage} from "./pages/GamePage.tsx";
 import {QueryClientProvider} from "@tanstack/react-query";
 import {queryClient} from "./config/api";
-import {ReactQueryDevtools} from "@tanstack/react-query-devtools";
 import {RouteGuard} from "./components/RouteGuard.tsx";
 import {useInitSecurity} from "./hooks/security/useInitSecurity.tsx";
 
@@ -18,7 +17,6 @@ function App() {
                             <GamePage/>
                         </RouteGuard>
                     </ThemeProvider>
-                    <ReactQueryDevtools initialIsOpen={false}/>
             </QueryClientProvider>
         </>
     )

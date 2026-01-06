@@ -84,7 +84,7 @@ export function GamePage() {
                                 variant={"contained"}
                                 sx={{mt: 1}}
                             >
-                                Start a new training game!
+                                Start a new training game! (vs AI)
                             </Button>
                         </Stack>
                     </>

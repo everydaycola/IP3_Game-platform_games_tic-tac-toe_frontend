@@ -12,11 +12,12 @@ import {useStartNewGame} from "../hooks/useStartNewGame.ts";
 export function GamePage() {
     const {gameState} = useOngoingGameBoard();
     const {createGame} = useStartNewGame();
-    const updateCurrentGameId = useCurrentGameStore((state) => state.updateCurrentGameId)
+    const updateCurrentGameId = useCurrentGameStore((state) => state.updateCurrentGameId);
     const {requestAiMove} = useAiMove();
     const loggedInUser = useSecurityStore((state) => state.loggedInUser);
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const theme = useTheme();
+
 
     useEffect(() => {
         if (gameState?.id) {

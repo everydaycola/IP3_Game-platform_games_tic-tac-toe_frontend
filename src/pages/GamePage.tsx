@@ -12,11 +12,12 @@ import {useStartNewGame} from "../hooks/useStartNewGame.ts";
 export function GamePage() {
     const {gameState} = useOngoingGameBoard();
     const {createGame} = useStartNewGame();
-    const updateCurrentGameId = useCurrentGameStore((state) => state.updateCurrentGameId)
+    const updateCurrentGameId = useCurrentGameStore((state) => state.updateCurrentGameId);
     const {requestAiMove} = useAiMove();
     const loggedInUser = useSecurityStore((state) => state.loggedInUser);
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const theme = useTheme();
+
 
     useEffect(() => {
         if (gameState?.id) {
@@ -83,7 +84,7 @@ export function GamePage() {
                                 variant={"contained"}
                                 sx={{mt: 1}}
                             >
-                                Start a new training game!
+                                Start a new training game! (vs AI)
                             </Button>
                         </Stack>
                     </>

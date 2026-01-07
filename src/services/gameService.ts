@@ -4,8 +4,12 @@ import type {MatchRequest} from "../models/MatchRequest.ts";
 import type {MoveRequest} from "../models/MoveRequest.ts";
 
 export async function getOngoingGame() {
-    const {data} = await axios.get<GameBoard>(`/matches/playing`)
-    return data as GameBoard;
+    try {
+        const {data} = await axios.get<GameBoard>(`/matches/playing`)
+        return data as GameBoard;
+    } catch (e) {
+        return null;
+    }
 }
 
 export async function getGame(gameId: string | null) {
